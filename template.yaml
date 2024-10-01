@@ -60,16 +60,16 @@ Resources:
       Handler: rcHandler.handler
       Runtime: nodejs18.x
       Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          AWS_REGION: !Ref Region
       Events:
         S3Event:
           Type: S3
           Properties:
             Bucket: !Ref ACBucket
             Events: s3:ObjectCreated:*
-        Environment:
-          Variables:
-            - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-            - AWS_REGION: !Ref Region
 
   RCLambdaFunction:
     Type: AWS::Serverless::Function
@@ -78,16 +78,16 @@ Resources:
       Handler: rcHandler.handler
       Runtime: nodejs18.x
       Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          AWS_REGION: !Ref Region
       Events:
         S3Event:
           Type: S3
           Properties:
             Bucket: !Ref RCBucket
             Events: s3:ObjectCreated:*
-        Environment:
-          Variables:
-            - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-            - AWS_REGION: !Ref Region
 
 Outputs:
   SQSQueueURL:
@@ -102,4 +102,3 @@ Outputs:
     Value: !Ref RCLambdaFunction
   LambdaExecutionRoleArn:
     Value: !GetAtt LambdaExecutionRole.Arn
-          
