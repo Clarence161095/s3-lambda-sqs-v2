@@ -1,6 +1,6 @@
 const { SQS } = require("@aws-sdk/client-sqs");
 
-const sqs = new SQS({ region: process.env.AWS_REGION });
+const sqs = new SQS({ region: process.env.STAGE_REGION });
 
 exports.handler = async (event) => {
   const record = event.Records[0];

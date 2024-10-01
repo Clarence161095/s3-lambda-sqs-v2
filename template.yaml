@@ -6,7 +6,7 @@ Parameters:
   SQSQueueName:
     Type: String
     Default: s3-lambda-sqs-v2-queue
-  Region:
+  StageRegion:
     Type: String
     Default: ap-northeast-1
 
@@ -62,8 +62,8 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-          AWS_REGION: !Ref Region
+          - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          - STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
           Type: S3
@@ -80,8 +80,8 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-          AWS_REGION: !Ref Region
+          - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          - STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
           Type: S3
