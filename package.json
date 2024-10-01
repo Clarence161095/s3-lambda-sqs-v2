@@ -1,0 +1,12 @@
+{
+  "name": "s3-lambda-sqs-v2",
+  "version": "1.0.0",
+  "description": "S3 Lambda SQS v2",
+  "scripts": {
+    "build": "sam build --use-container",
+    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name s3-lambda-sqs-v2 --s3-bucket ${ARTIFACT_BUCKET} --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --region ${AWS_REGION}"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1001.0"
+  }
+}

@@ -15,9 +15,6 @@ Parameters:
     Type: String
     NoEcho: true
     Description: GitHub OAuth Token with repo access permission
-  ArtifactsBucketName:
-    Type: String
-    Default: ${AWS::AccountId}-${RepositoryName}-artifacts
 
 Resources:
   CodeBuildServiceRole:
@@ -152,7 +149,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
-      BucketName: !Ref ArtifactsBucketName
+      BucketName: !Sub ${AWS::StackName}-artifacts
       VersioningConfiguration:
         Status: Enabled
       BucketEncryption:

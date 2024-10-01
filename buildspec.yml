@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18.x
+    commands:
+      - pip3 install aws-sam-cli
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - npm run deploy
+
+artifacts:
+  type: zip
+  files:
+    - template.yaml
+    - packaged.yaml
+    - src/**/*
+  name: build-output
