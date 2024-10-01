@@ -85,6 +85,7 @@ Resources:
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
+    DeletionPolicy: Retain
     Properties:
       Name: !Sub ${RepositoryName}-build
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
@@ -106,6 +107,7 @@ Resources:
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
+    DeletionPolicy: Retain
     Properties:
       Name: !Sub ${RepositoryName}-pipeline
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
