@@ -62,7 +62,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          SQS_QUEUE_URL: !Ref SQSQueueName
           STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
@@ -80,7 +80,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          SQS_QUEUE_URL: !Ref SQSQueueName
           STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
