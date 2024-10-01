@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless S3 Lambda SQS V2
+
+Parameters:
+  SQSQueueName:
+    Type: String
+    Default: s3-lambda-sqs-v2-queue
+  Region:
+    Type: String
+    Default: ap-northeast-1
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:*
+                Resource: !GetAtt SQSQueue.Arn
+
+  SQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref SQSQueueName
+
+  ACBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub ${RepositoryName}-ac-bucket
+
+  RCBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub ${RepositoryName}-rc-bucket
+
+  ACLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: rcHandler.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref ACBucket
+            Events: s3:ObjectCreated:*
+        Environment:
+          Variables:
+            - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+            - AWS_REGION: !Ref Region
+
+  RCLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: rcHandler.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref RCBucket
+            Events: s3:ObjectCreated:*
+        Environment:
+          Variables:
+            - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+            - AWS_REGION: !Ref Region
+
+Outputs:
+  SQSQueueURL:
+    Value: !GetAtt SQSQueue.Arn
+  ACBucketName:
+    Value: !Ref ACBucket
+  RCBucketName:
+    Value: !Ref RCBucket
+  ACLambdaFunctionName:
+    Value: !Ref ACLambdaFunction
+  RCLambdaFunctionName:
+    Value: !Ref RCLambdaFunction
+  LambdaExecutionRoleArn:
+    Value: !GetAtt LambdaExecutionRole.Arn
+          

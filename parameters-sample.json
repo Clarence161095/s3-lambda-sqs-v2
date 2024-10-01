@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "GitHubOwner",
+    "ParameterValue": "your-github-username"
+  },
+  {
+    "ParameterKey": "GitHubRepo",
+    "ParameterValue": "your-repo-name"
+  },
+  {
+    "ParameterKey": "GitHubBranch",
+    "ParameterValue": "main"
+  },
+  {
+    "ParameterKey": "GitHubOAuthToken",
+    "ParameterValue": "your-github-token"
+  }
+]
