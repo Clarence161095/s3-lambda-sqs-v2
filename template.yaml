@@ -62,8 +62,8 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-          - STAGE_REGION: !Ref StageRegion
+          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
           Type: S3
@@ -80,8 +80,8 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          - SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
-          - STAGE_REGION: !Ref StageRegion
+          SQS_QUEUE_URL: !GetAtt SQSQueue.Arn
+          STAGE_REGION: !Ref StageRegion
       Events:
         S3Event:
           Type: S3
