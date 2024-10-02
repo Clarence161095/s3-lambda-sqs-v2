@@ -91,7 +91,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     DeletionPolicy: Retain
     Properties:
-      Name: !Sub ${RepositoryName}-build
+      Name: !Sub ${AWS::StackName}-build
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -113,7 +113,7 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     DeletionPolicy: Retain
     Properties:
-      Name: !Sub ${RepositoryName}-pipeline
+      Name: !Sub ${AWS::StackName}-pipeline
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
       ArtifactStore:
         Type: S3
