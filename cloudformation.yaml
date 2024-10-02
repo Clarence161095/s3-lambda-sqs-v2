@@ -4,7 +4,7 @@ Description: "CI/CD Pipeline for s3-lambda-sqs-demo project using GitHub"
 Parameters:
   RepositoryName:
     Type: String
-    Default: 101-lab-practice-s3-lambda-sqs-v2
+    Default: lab-practice-101-s3-lambda-sqs-v2
   BranchName:
     Type: String
     Default: develop

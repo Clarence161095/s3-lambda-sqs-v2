@@ -5,7 +5,7 @@ Description: Serverless S3 Lambda SQS V2
 Parameters:
   SQSQueueName:
     Type: String
-    Default: 101-lab-practice-s3-lambda-sqs-v2-queue
+    Default: lab-practice-101-s3-lambda-sqs-v2-queue
   StageRegion:
     Type: String
     Default: ap-northeast-1

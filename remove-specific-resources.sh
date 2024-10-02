@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PREFIX="101-lab-practice-"
+PREFIX="lab-practice-101-"
 
 # API Gateway
 aws apigateway get-rest-apis | jq -r '.items[] | select(.name | startswith("'"$PREFIX"'")) | .id' | while read x; do
