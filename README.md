@@ -1,4 +1,4 @@
-# s3-lambda-sqs-v2
+# 101-lab-practice-s3-lambda-sqs-v2
 
 ## CloudFormation
 
@@ -6,7 +6,7 @@
 
 ```bash
 aws cloudformation create-stack \
-  --stack-name s3-lambda-sqs-v2 \
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2 \
   --template-body file://cloudformation.yaml \
   --parameters file://parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
@@ -16,7 +16,7 @@ aws cloudformation create-stack \
 
 ```bash
 aws cloudformation update-stack \
-  --stack-name s3-lambda-sqs-v2 \
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2 \
   --template-body file://cloudformation.yaml \
   --parameters file://parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
@@ -26,8 +26,8 @@ aws cloudformation update-stack \
 
 ```bash
 aws cloudformation create-change-set \
-  --stack-name s3-lambda-sqs-v2 \
-  --change-set-name s3-lambda-sqs-v2-change-set \
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2 \
+  --change-set-name 101-lab-practice-s3-lambda-sqs-v2-change-set \
   --template-body file://cloudformation.yaml \
   --parameters file://parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
@@ -37,21 +37,21 @@ aws cloudformation create-change-set \
 
 ```bash
 aws cloudformation describe-change-set \
-  --change-set-name s3-lambda-sqs-v2-change-set \
-  --stack-name s3-lambda-sqs-v2
+  --change-set-name 101-lab-practice-s3-lambda-sqs-v2-change-set \
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2
 ```
 
 ### Execute change set
 
 ```bash
 aws cloudformation execute-change-set \
-  --change-set-name s3-lambda-sqs-v2-change-set \
-  --stack-name s3-lambda-sqs-v2
+  --change-set-name 101-lab-practice-s3-lambda-sqs-v2-change-set \
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2
 ```
 
 ### Delete stack
 
 ```bash
 aws cloudformation delete-stack \
-  --stack-name s3-lambda-sqs-v2
+  --stack-name 101-lab-practice-s3-lambda-sqs-v2
 ```

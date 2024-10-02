@@ -1,10 +1,10 @@
 {
-  "name": "s3-lambda-sqs-v2",
+  "name": "101-lab-practice-s3-lambda-sqs-v2",
   "version": "1.0.0",
   "description": "S3 Lambda SQS v2",
   "scripts": {
     "build": "sam build --use-container",
-    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name s3-lambda-sqs-v2 --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name 101-lab-practice-s3-lambda-sqs-v2 --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM"
   },
   "dependencies": {
     "aws-sdk": "^2.1001.0"
