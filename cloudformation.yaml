@@ -49,6 +49,8 @@ Resources:
                   - iam:PassRole
                   - s3:*
                   - codebuild:*
+                  - cloudformation:*
+                  - sam:*
                 Resource: "*"
 
   CodePipelineServiceRole:
