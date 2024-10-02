@@ -19,7 +19,7 @@ Parameters:
 Resources:
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
-    DeletionPolicy: Delete
+    DeletionPolicy: Retain
     Properties:
       RoleName: !Sub ${AWS::StackName}-CodeBuildServiceRole
       AssumeRolePolicyDocument:
@@ -56,7 +56,7 @@ Resources:
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
-    DeletionPolicy: Delete
+    DeletionPolicy: Retain
     Properties:
       RoleName: !Sub ${AWS::StackName}-CodePipelineServiceRole
       AssumeRolePolicyDocument:

@@ -12,6 +12,16 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
+### Update stack
+
+```bash
+aws cloudformation update-stack \
+  --stack-name s3-lambda-sqs-v2 \
+  --template-body file://cloudformation.yaml \
+  --parameters file://parameters.json \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
 ### Create change set
 
 ```bash
