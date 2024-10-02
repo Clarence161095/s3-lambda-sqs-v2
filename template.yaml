@@ -38,6 +38,7 @@ Resources:
 
   SQSQueue:
     Type: AWS::SQS::Queue
+    DeletionPolicy: Retain
     Properties:
       QueueName: !Ref SQSQueueName
 
