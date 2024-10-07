@@ -9,6 +9,13 @@ Parameters:
   StageRegion:
     Type: String
     Default: ap-northeast-1
+  CreateBuckets:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+
+Conditions:
+  ShouldCreateBuckets: !Equals [!Ref CreateBuckets, "true"]
 
 Resources:
   LambdaExecutionRole:
@@ -44,13 +51,17 @@ Resources:
 
   ACBucket:
     Type: AWS::S3::Bucket
+    Condition: ShouldCreateBuckets
     DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       BucketName: !Sub ${AWS::StackName}-ac-bucket
 
   RCBucket:
     Type: AWS::S3::Bucket
+    Condition: ShouldCreateBuckets
     DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       BucketName: !Sub ${AWS::StackName}-rc-bucket
 
