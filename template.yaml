@@ -9,13 +9,13 @@ Parameters:
   StageRegion:
     Type: String
     Default: ap-northeast-1
-  CreateResources:
+  CreateBuckets:
     Type: String
     Default: "false"
     AllowedValues: ["true", "false"]
 
 Conditions:
-  ShouldCreateResources: !Equals [!Ref CreateResources, "true"]
+  ShouldCreateBuckets: !Equals [!Ref CreateBuckets, "true"]
 
 Resources:
   LambdaExecutionRole:
@@ -43,16 +43,9 @@ Resources:
                   - sqs:*
                 Resource: !GetAtt SQSQueue.Arn
 
-  SQSQueue:
-    Type: AWS::SQS::Queue
-    Condition: ShouldCreateResources
-    DeletionPolicy: Retain
-    Properties:
-      QueueName: !Ref SQSQueueName
-
   ACBucket:
     Type: AWS::S3::Bucket
-    Condition: ShouldCreateResources
+    Condition: ShouldCreateBuckets
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
@@ -60,7 +53,7 @@ Resources:
 
   RCBucket:
     Type: AWS::S3::Bucket
-    Condition: ShouldCreateResources
+    Condition: ShouldCreateBuckets
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
@@ -103,8 +96,6 @@ Resources:
             Events: s3:ObjectCreated:*
 
 Outputs:
-  SQSQueueURL:
-    Value: !GetAtt SQSQueue.Arn
   ACLambdaFunctionName:
     Value: !Ref ACLambdaFunction
   RCLambdaFunctionName:
