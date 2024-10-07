@@ -15,7 +15,7 @@ Parameters:
     AllowedValues: ["true", "false"]
 
 Conditions:
-  ShouldCreateResources:: !Equals [!Ref CreateResources:, "true"]
+  ShouldCreateResources: !Equals [!Ref CreateResources, "true"]
 
 Resources:
   LambdaExecutionRole:
@@ -45,14 +45,14 @@ Resources:
 
   SQSQueue:
     Type: AWS::SQS::Queue
-    Condition: ShouldCreateResources:
+    Condition: ShouldCreateResources
     DeletionPolicy: Retain
     Properties:
       QueueName: !Ref SQSQueueName
 
   ACBucket:
     Type: AWS::S3::Bucket
-    Condition: ShouldCreateResources:
+    Condition: ShouldCreateResources
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
@@ -60,7 +60,7 @@ Resources:
 
   RCBucket:
     Type: AWS::S3::Bucket
-    Condition: ShouldCreateResources:
+    Condition: ShouldCreateResources
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
