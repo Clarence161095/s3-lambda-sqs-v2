@@ -104,10 +104,6 @@ Resources:
 Outputs:
   SQSQueueURL:
     Value: !GetAtt SQSQueue.Arn
-  ACBucketName:
-    Value: !Ref ACBucket
-  RCBucketName:
-    Value: !Ref RCBucket
   ACLambdaFunctionName:
     Value: !Ref ACLambdaFunction
   RCLambdaFunctionName:
