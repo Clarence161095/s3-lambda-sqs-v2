@@ -11,7 +11,7 @@ Parameters:
     Default: ap-northeast-1
   CreateBuckets:
     Type: String
-    Default: "true"
+    Default: "false"
     AllowedValues: ["true", "false"]
 
 Conditions:
