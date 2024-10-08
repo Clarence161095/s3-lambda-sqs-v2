@@ -29,7 +29,6 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
-                - codebuild.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
@@ -69,7 +68,7 @@ Resources:
     Properties:
       # FunctionName: !Sub ${AWS::StackName}-ac-lambda-function
       CodeUri: src/
-      Handler: rcHandler.handler
+      Handler: acHandler.handler
       Runtime: nodejs18.x
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
