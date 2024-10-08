@@ -11,7 +11,7 @@ Parameters:
     Default: ap-northeast-1
   CreateBuckets:
     Type: String
-    Default: "false"
+    Default: "true"
     AllowedValues: ["true", "false"]
 
 Conditions:
@@ -43,6 +43,10 @@ Resources:
                   - sqs:*
                 # arn:aws:sqs:ap-northeast-1:108782097001:lab-practice-101-s3-lambda-sqs-v2-queue-test
                 Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+              - Effect: Allow
+                Action:
+                  - s3:PutBucketNotification
+                Resource: "*"
 
   ACBucket:
     Type: AWS::S3::Bucket
