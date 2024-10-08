@@ -100,10 +100,36 @@ Resources:
             Bucket: !Ref RCBucket
             Events: s3:ObjectCreated:*
 
-Outputs:
-  ACLambdaFunctionName:
-    Value: !Ref ACLambdaFunction
-  RCLambdaFunctionName:
-    Value: !Ref RCLambdaFunction
-  LambdaExecutionRoleArn:
-    Value: !GetAtt LambdaExecutionRole.Arn
+  ACLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt ACLambdaFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub arn:aws:s3:::${ACBucket}
+
+  RCLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt RCLambdaFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub arn:aws:s3:::${RCBucket}
+
+  ACBucketNotification:
+    Type: AWS::S3::BucketNotification
+    Properties:
+      Bucket: !Ref ACBucket
+      LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function: !GetAtt ACLambdaFunction.Arn
+
+  RCBucketNotification:
+    Type: AWS::S3::BucketNotification
+    Properties:
+      Bucket: !Ref RCBucket
+      LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function: !GetAtt RCLambdaFunction.Arn
