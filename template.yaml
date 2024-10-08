@@ -29,6 +29,7 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
+                - codebuild.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
