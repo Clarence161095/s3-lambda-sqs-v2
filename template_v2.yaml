@@ -1,0 +1,143 @@
+# This AWS SAM template has been generated from your function's configuration. If
+# your function has one or more triggers, note that the AWS resources associated
+# with these triggers aren't fully specified in this template and include
+# placeholder values. Open this template in AWS Application Composer or your
+# favorite IDE and modify it to specify a serverless application with other AWS
+# resources.
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Application Model template describing your function.
+
+Parameters:
+  SQSQueueName:
+    Type: String
+    Default: lab-practice-101-s3-lambda-sqs-v2-queue
+  StageRegion:
+    Type: String
+    Default: ap-northeast-1
+
+Resources:
+  labpractice101s3lambdasqsv2RCLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Handler: rcHandler.handler
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: lab-practice-101-s3-lambda-sqs-v2-queue-test
+          STAGE_REGION: ap-northeast-1
+      Policies:
+        - Statement:
+            - Action:
+                - sqs:*
+              Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+              Effect: Allow
+            - Action:
+                - s3:PutBucketNotification
+              Resource:
+                - !GetAtt Bucket1.Arn
+              Effect: Allow
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: '*'
+      Events:
+        BucketEvent1:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket1
+            Events:
+              - s3:ObjectCreated:*
+  Bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+  BucketPolicy1:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: Bucket1
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Effect: Deny
+            Principal: '*'
+            Resource:
+              - arn:aws:s3:::Bucket1/*
+              - arn:aws:s3:::Bucket1
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+  labpractice101s3lambdasqsv2ACLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Handler: rcHandler.handler
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: lab-practice-101-s3-lambda-sqs-v2-queue-test
+          STAGE_REGION: ap-northeast-1
+      Policies:
+        - Statement:
+            - Action:
+                - sqs:*
+              Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+              Effect: Allow
+            - Action:
+                - s3:PutBucketNotification
+              Resource:
+                - !GetAtt Bucket2.Arn
+              Effect: Allow
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: '*'
+      Events:
+        BucketEvent2:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket2
+            Events:
+              - s3:ObjectCreated:*
+  Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+  BucketPolicy2:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: Bucket2
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Effect: Deny
+            Principal: '*'
+            Resource:
+              - arn:aws:s3:::Bucket2/*
+              - arn:aws:s3:::Bucket2
+            Condition:
+              Bool:
+                aws:SecureTransport: false
