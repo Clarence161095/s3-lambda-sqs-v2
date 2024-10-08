@@ -58,3 +58,15 @@ aws iam list-policies --scope Local | jq -r '.Policies[] | select(.PolicyName | 
     # Delete the policy
     aws iam delete-policy --policy-arn $policy_arn
 done
+
+# S3 - Remember alway remove S3 after all
+aws s3api list-buckets --query "Buckets[?starts_with(Name, 'lab-practice-101-s3-lambda-sqs-v2-artifacts')].Name" --output text | tr '\t' '\n' | while read bucket; do
+  # Delete all objects from the bucket
+  aws s3api delete-objects --bucket "$bucket" --delete "$(aws s3api list-object-versions --bucket "$bucket" --output=json --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
+  
+  # Delete all object delete markers from the bucket
+  aws s3api delete-objects --bucket "$bucket" --delete "$(aws s3api list-object-versions --bucket "$bucket" --output=json --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')"
+  
+  # Delete the bucket
+  aws s3 rb "s3://$bucket" --force
+done
