@@ -9,8 +9,9 @@ phases:
   pre_build:
     commands:
       - npm install
-  post_build:
+  build:
     commands:
+      - npm run build
       - |
         set -e
         {
@@ -20,7 +21,16 @@ phases:
             --stack-name lab-practice-101-s3-lambda-sqs-v2 \
             --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
-
+        } || {
+          echo "Deployment failed!"
+          aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2
+          exit 1
+        }
+  post_build:
+    commands:
+      - |
+        set -e
+        {
           echo "Waiting for stack to be created/updated..."
           aws cloudformation wait stack-create-complete --stack-name lab-practice-101-s3-lambda-sqs-v2
 
