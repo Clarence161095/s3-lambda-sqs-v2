@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless S3 Lambda SQS V2
+
+Parameters:
+  SQSQueueName:
+    Type: String
+    Default: lab-practice-101-s3-lambda-sqs-v2-queue
+  StageRegion:
+    Type: String
+    Default: ap-northeast-1
+  CreateBuckets:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+
+Conditions:
+  ShouldCreateBuckets: !Equals [!Ref CreateBuckets, "true"]
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:*
+                # arn:aws:sqs:ap-northeast-1:108782097001:lab-practice-101-s3-lambda-sqs-v2-queue
+                Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+              - Effect: Allow
+                Action:
+                  - s3:PutBucketNotification
+                Resource: "*"
+
+  ACBucket:
+    Type: AWS::S3::Bucket
+    Condition: ShouldCreateBuckets
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-ac-bucket
+
+  RCBucket:
+    Type: AWS::S3::Bucket
+    Condition: ShouldCreateBuckets
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-rc-bucket
+
+  ACLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # FunctionName: !Sub ${AWS::StackName}-ac-lambda-function
+      CodeUri: src/
+      Handler: acHandler.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !Ref SQSQueueName
+          STAGE_REGION: !Ref StageRegion
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref ACBucket
+            Events: s3:ObjectCreated:*
+
+  RCLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # FunctionName: !Sub ${AWS::StackName}-rc-lambda-function
+      CodeUri: src/
+      Handler: rcHandler.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !Ref SQSQueueName
+          STAGE_REGION: !Ref StageRegion
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref RCBucket
+            Events: s3:ObjectCreated:*
