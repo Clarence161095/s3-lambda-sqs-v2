@@ -12,8 +12,6 @@ phases:
   build:
     commands:
       - npm run build
-  post_build:
-    commands:
       - |
         set -e
         {
@@ -22,7 +20,16 @@ phases:
             --stack-name lab-practice-101-s3-lambda-sqs-v2 \
             --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
-
+        } || {
+          echo "sam build failed!"
+          aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2
+          exit 1
+        } 
+  post_build:
+    commands:
+      - |
+        set -e
+        {
           # Lấy ARN của Lambda functions từ output của stack
           AC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='ACLambdaFunction'].OutputValue" --output text)
           RC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='RCLambdaFunction'].OutputValue" --output text)
