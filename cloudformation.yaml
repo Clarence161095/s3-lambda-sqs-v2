@@ -29,15 +29,8 @@ Resources:
             Principal:
               Service: codebuild.amazonaws.com
             Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess
-        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
-        - arn:aws:iam::aws:policy/AmazonS3FullAccess
-        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
-        - arn:aws:iam::aws:policy/IAMFullAccess
-        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
       Policies:
-        - PolicyName: CodeBuildAdditionalPermissions
+        - PolicyName: CodeBuildServiceRolePolicy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -46,13 +39,91 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                  - codepipeline:*
+                  - logs:TagResource
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:ValidateTemplate
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStacks
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:ListStackResources
+                  - cloudformation:GetTemplate
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:DeleteRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:GetRole
                   - iam:PassRole
-                  - s3:*
-                  - codebuild:*
-                  - cloudformation:*
-                  - sam:*
-                Resource: "*"
+                  - iam:TagRole
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - lambda:UpdateFunctionCode
+                  - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
+                  - lambda:UpdateFunctionConfiguration
+                  - lambda:CreateFunction
+                  - lambda:DeleteFunction
+                  - lambda:ListVersionsByFunction
+                  - lambda:PublishVersion
+                  - lambda:InvokeFunction
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                  - lambda:UntagResource
+                  - lambda:UpdateAlias
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - lambda:GetLayerVersion
+                  - lambda:PublishLayerVersion
+                  - lambda:DeleteLayerVersion
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:PutObject
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - elasticloadbalancing:*
+                Resource:
+                  - "*"
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
@@ -104,6 +175,10 @@ Resources:
             Value: !Ref PipelineArtifactsBucket
           - Name: AWS_REGION
             Value: !Ref AWS::Region
+          - Name: RC_BUCKET
+            Value: lab-practice-101-s3-lambda-sqs-v2-rc-bucket
+          - Name: AC_BUCKET
+            Value: lab-practice-101-s3-lambda-sqs-v2-ac-bucket
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec.yml

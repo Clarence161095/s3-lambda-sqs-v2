@@ -14,12 +14,44 @@ phases:
       - npm run build
   post_build:
     commands:
-      - npm run deploy
+      - |
+        set -e
+        {
+          sam deploy \
+            --no-confirm-changeset --no-fail-on-empty-changeset \
+            --stack-name lab-practice-101-s3-lambda-sqs-v2 \
+            --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 
-artifacts:
-  type: zip
-  files:
-    - template.yaml
-    - packaged.yaml
-    - src/**/*
-  name: build-output
+          # Lấy ARN của Lambda functions từ output của stack
+          AC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='ACLambdaFunction'].OutputValue" --output text)
+          RC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='RCLambdaFunction'].OutputValue" --output text)
+
+          # Tạo event notification cho AC_BUCKET
+          aws s3api put-bucket-notification-configuration \
+            --bucket ${AC_BUCKET} \
+            --notification-configuration '{
+              "LambdaFunctionConfigurations": [
+                {
+                  "LambdaFunctionArn": "'"${AC_LAMBDA_ARN}"'",
+                  "Events": ["s3:ObjectCreated:*"]
+                }
+              ]
+            }'
+
+          # Tạo event notification cho RC_BUCKET
+          aws s3api put-bucket-notification-configuration \
+            --bucket ${RC_BUCKET} \
+            --notification-configuration '{
+              "LambdaFunctionConfigurations": [
+                {
+                  "LambdaFunctionArn": "'"${RC_LAMBDA_ARN}"'",
+                  "Events": ["s3:ObjectCreated:*"]
+                }
+              ]
+            }'
+        } || {
+          echo "sam build failed!"
+          aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2
+          exit 1
+        }
