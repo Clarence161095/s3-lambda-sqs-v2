@@ -61,6 +61,6 @@ Resources:
 
 Outputs:
   ACLambdaFunction:
-    Value: !Ref ACLambdaFunction.Arn
+    Value: !GetAtt ACLambdaFunction.Arn
   RCLambdaFunction:
-    Value: !Ref RCLambdaFunction.Arn
+    Value: !GetAtt RCLambdaFunction.Arn
