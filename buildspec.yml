@@ -22,8 +22,7 @@ phases:
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 
           echo "Waiting for stack to be created/updated..."
-          aws cloudformation wait stack-create-complete --stack-name lab-practice-101-s3-lambda-sqs-v2 || \
-          aws cloudformation wait stack-update-complete --stack-name lab-practice-101-s3-lambda-sqs-v2
+          aws cloudformation wait stack-create-complete --stack-name lab-practice-101-s3-lambda-sqs-v2
 
           echo "Getting Lambda ARNs from stack outputs..."
           AC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='ACLambdaFunction'].OutputValue" --output text)
