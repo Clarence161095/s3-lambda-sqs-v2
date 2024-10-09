@@ -9,32 +9,35 @@ phases:
   pre_build:
     commands:
       - npm install
-  build:
-    commands:
-      - npm run build
-      - |
-        set -e
-        {
-          sam deploy \
-            --no-confirm-changeset --no-fail-on-empty-changeset \
-            --stack-name lab-practice-101-s3-lambda-sqs-v2 \
-            --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} \
-            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
-        } || {
-          echo "sam build failed!"
-          aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2
-          exit 1
-        } 
   post_build:
     commands:
       - |
         set -e
         {
-          # Lấy ARN của Lambda functions từ output của stack
+          echo "Deploying SAM application..."
+          sam deploy \
+            --no-confirm-changeset --no-fail-on-empty-changeset \
+            --stack-name lab-practice-101-s3-lambda-sqs-v2 \
+            --s3-bucket ${ARTIFACT_BUCKET} --region ${AWS_REGION} \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+
+          echo "Waiting for stack to be created/updated..."
+          aws cloudformation wait stack-create-complete --stack-name lab-practice-101-s3-lambda-sqs-v2 || \
+          aws cloudformation wait stack-update-complete --stack-name lab-practice-101-s3-lambda-sqs-v2
+
+          echo "Getting Lambda ARNs from stack outputs..."
           AC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='ACLambdaFunction'].OutputValue" --output text)
           RC_LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name lab-practice-101-s3-lambda-sqs-v2 --query "Stacks[0].Outputs[?OutputKey=='RCLambdaFunction'].OutputValue" --output text)
 
-          # Tạo event notification cho AC_BUCKET
+          echo "AC Lambda ARN: ${AC_LAMBDA_ARN}"
+          echo "RC Lambda ARN: ${RC_LAMBDA_ARN}"
+
+          if [ -z "$AC_LAMBDA_ARN" ] || [ -z "$RC_LAMBDA_ARN" ]; then
+            echo "Error: One or both Lambda ARNs are empty. Exiting..."
+            exit 1
+          fi
+
+          echo "Configuring S3 bucket notifications..."
           aws s3api put-bucket-notification-configuration \
             --bucket ${AC_BUCKET} \
             --notification-configuration '{
@@ -46,7 +49,6 @@ phases:
               ]
             }'
 
-          # Tạo event notification cho RC_BUCKET
           aws s3api put-bucket-notification-configuration \
             --bucket ${RC_BUCKET} \
             --notification-configuration '{
@@ -57,8 +59,10 @@ phases:
                 }
               ]
             }'
+
+          echo "Deployment completed successfully!"
         } || {
-          echo "sam build failed!"
+          echo "Deployment failed!"
           aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2
           exit 1
         }
