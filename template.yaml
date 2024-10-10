@@ -38,8 +38,7 @@ Resources:
                 Action:
                   - lambda:InvokeFunction
                 Resource:
-                  - !GetAtt ACLambdaFunction.Arn
-                  - !GetAtt RCLambdaFunction.Arn
+                  - !Sub arn:aws:lambda:${StageRegion}:${AWS::AccountId}:function:${AWS::StackName}-*
         - PolicyName: S3InvokeLambdaPolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -49,8 +48,7 @@ Resources:
                   Service: s3.amazonaws.com
                 Action: lambda:InvokeFunction
                 Resource:
-                  - !GetAtt ACLambdaFunction.Arn
-                  - !GetAtt RCLambdaFunction.Arn
+                  - !Sub arn:aws:lambda:${StageRegion}:${AWS::AccountId}:function:${AWS::StackName}-*
 
   ACLambdaFunction:
     Type: AWS::Serverless::Function
