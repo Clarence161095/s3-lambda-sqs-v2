@@ -177,10 +177,6 @@ Resources:
             Value: !Ref PipelineArtifactsBucket
           - Name: AWS_REGION
             Value: !Ref AWS::Region
-          - Name: RC_BUCKET
-            Value: lab-practice-101-s3-lambda-sqs-v2-rc-bucket
-          - Name: AC_BUCKET
-            Value: lab-practice-101-s3-lambda-sqs-v2-ac-bucket
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec.yml

@@ -48,7 +48,7 @@ phases:
 
           echo "Configuring S3 bucket notifications..."
           aws s3api put-bucket-notification-configuration \
-            --bucket ${AC_BUCKET} \
+            --bucket lab-practice-101-s3-lambda-sqs-v2-ac-bucket \
             --notification-configuration '{
               "LambdaFunctionConfigurations": [
                 {
@@ -59,7 +59,7 @@ phases:
             }'
 
           aws s3api put-bucket-notification-configuration \
-            --bucket ${RC_BUCKET} \
+            --bucket lab-practice-101-s3-lambda-sqs-v2-rc-bucket \
             --notification-configuration '{
               "LambdaFunctionConfigurations": [
                 {
