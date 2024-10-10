@@ -33,22 +33,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - sqs:*
-                Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+                Resource: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${SQSQueueName}
               - Effect: Allow
                 Action:
                   - lambda:InvokeFunction
                 Resource:
-                  - !Sub arn:aws:lambda:${StageRegion}:${AWS::AccountId}:function:${AWS::StackName}-*
-        - PolicyName: S3InvokeLambdaPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Principal:
-                  Service: s3.amazonaws.com
-                Action: lambda:InvokeFunction
-                Resource:
-                  - !Sub arn:aws:lambda:${StageRegion}:${AWS::AccountId}:function:${AWS::StackName}-*
+                  - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-*
 
   ACLambdaFunction:
     Type: AWS::Serverless::Function
