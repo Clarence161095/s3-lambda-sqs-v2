@@ -31,6 +31,8 @@ phases:
       - |
         set -e
         {
+          trap 'echo "Deployment failed!"; aws cloudformation delete-stack --stack-name lab-practice-101-s3-lambda-sqs-v2; exit 1' ERR
+
           echo "Waiting for stack to be created/updated..."
           aws cloudformation wait stack-create-complete --stack-name lab-practice-101-s3-lambda-sqs-v2
 
