@@ -34,11 +34,6 @@ Resources:
                 Action:
                   - sqs:*
                 Resource: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${SQSQueueName}
-              - Effect: Allow
-                Action:
-                  - lambda:InvokeFunction
-                Resource:
-                  - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-*
 
   ACLambdaFunction:
     Type: AWS::Serverless::Function

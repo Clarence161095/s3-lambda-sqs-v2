@@ -46,6 +46,20 @@ phases:
             exit 1
           fi
 
+          aws lambda add-permission \
+            --function-name ${AC_LAMBDA_ARN} \
+            --statement-id s3-invoke \
+            --action lambda:InvokeFunction \
+            --principal s3.amazonaws.com \
+            --source-arn arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-ac-bucket \
+          
+          aws lambda add-permission \
+            --function-name ${RC_LAMBDA_ARN} \
+            --statement-id s3-invoke \
+            --action lambda:InvokeFunction \
+            --principal s3.amazonaws.com \
+            --source-arn arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-rc-bucket
+
           echo "Configuring S3 bucket notifications..."
           aws s3api put-bucket-notification-configuration \
             --bucket lab-practice-101-s3-lambda-sqs-v2-ac-bucket \
