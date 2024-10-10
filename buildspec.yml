@@ -68,6 +68,7 @@ phases:
             --notification-configuration '{
               "LambdaFunctionConfigurations": [
                 {
+                  "Id": "trigger-ac-lambda",
                   "LambdaFunctionArn": "'"${AC_LAMBDA_ARN}"'",
                   "Events": ["s3:ObjectCreated:*"]
                 }
@@ -79,6 +80,7 @@ phases:
             --notification-configuration '{
               "LambdaFunctionConfigurations": [
                 {
+                  "Id": "trigger-rc-lambda",
                   "LambdaFunctionArn": "'"${RC_LAMBDA_ARN}"'",
                   "Events": ["s3:ObjectCreated:*"]
                 }
