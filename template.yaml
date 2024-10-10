@@ -34,6 +34,23 @@ Resources:
                 Action:
                   - sqs:*
                 Resource: !Sub arn:aws:sqs:${StageRegion}:${AWS::AccountId}:${SQSQueueName}
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt ACLambdaFunction.Arn
+                  - !GetAtt RCLambdaFunction.Arn
+        - PolicyName: S3InvokeLambdaPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Principal:
+                  Service: s3.amazonaws.com
+                Action: lambda:InvokeFunction
+                Resource:
+                  - !GetAtt ACLambdaFunction.Arn
+                  - !GetAtt RCLambdaFunction.Arn
 
   ACLambdaFunction:
     Type: AWS::Serverless::Function
