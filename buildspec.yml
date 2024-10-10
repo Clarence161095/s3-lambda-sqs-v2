@@ -48,19 +48,26 @@ phases:
             exit 1
           fi
 
-          aws lambda add-permission \
-            --function-name ${AC_LAMBDA_ARN} \
-            --statement-id s3-invoke \
-            --action lambda:InvokeFunction \
-            --principal s3.amazonaws.com \
-            --source-arn arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-ac-bucket \
-          
-          aws lambda add-permission \
-            --function-name ${RC_LAMBDA_ARN} \
-            --statement-id s3-invoke \
-            --action lambda:InvokeFunction \
-            --principal s3.amazonaws.com \
-            --source-arn arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-rc-bucket
+          add_permission_if_not_exists() {
+            local function_name=$1
+            local statement_id=$2
+            local source_arn=$3
+            
+            if ! aws lambda get-policy --function-name $function_name --query "Policy" --output text 2>/dev/null | grep -q "$statement_id"; then
+              echo "Adding permission for $function_name"
+              aws lambda add-permission \
+                --function-name $function_name \
+                --statement-id $statement_id \
+                --action lambda:InvokeFunction \
+                --principal s3.amazonaws.com \
+                --source-arn $source_arn
+            else
+              echo "Permission already exists for $function_name"
+            fi
+          }
+
+          add_permission_if_not_exists "${AC_LAMBDA_ARN}" "s3-invoke-ac" "arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-ac-bucket"
+          add_permission_if_not_exists "${RC_LAMBDA_ARN}" "s3-invoke-rc" "arn:aws:s3:::lab-practice-101-s3-lambda-sqs-v2-rc-bucket"
 
           echo "Configuring S3 bucket notifications..."
           aws s3api put-bucket-notification-configuration \
